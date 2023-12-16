@@ -1,0 +1,49 @@
+# version: '3'
+# services:
+#   elasticsearch:
+#     image: docker.elastic.co/elasticsearch/elasticsearch:7.13.1
+#     environment:
+#       - discovery.type=single-node # disable production mode for development, there is only one node
+#     ports:
+#       - "9200:9200"
+
+#   kibana:
+#     image: docker.elastic.co/kibana/kibana:7.13.1
+#     ports:
+#       - "5601:5601"
+#     depends_on:
+#       - elasticsearch
+#     environment:
+#       ELASTICSEARCH_URL: http://elasticsearch:9200
+
+# volumes:
+#   elasticsearch_data:
+version: '3'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.1
+    environment:
+      - discovery.type=single-node
+      - http.cors.enabled=true
+      - http.cors.allow-origin=*
+    ports:
+      - "9200:9200"
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.13.1
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+      SERVER_NAME: kibana
+      SERVER_HOST: "0.0.0.0"
+      XPACK_SECURITY_ENABLED: "false"
+      XPACK_REPORTING_ENABLED: "false"
+    links:
+      - "elasticsearch"
+
+volumes:
+  elasticsearch_data:
